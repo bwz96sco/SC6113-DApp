@@ -1,0 +1,99 @@
+<h2>Welcome to transfer money v1</h2>
+<br><br>
+<input type="text" id="payer_id" placeholder="Please input payer address">
+<br><br>
+<input type="text" id="payee_id" placeholder="Please input payee address">
+<br><br>
+<input type="number" id="num_id" placeholder="Please input amount to pay">
+<br><br>
+<button class="btn" onclick="transfer()">Transfer Money</button>
+<br><br>
+<button class="btn" onclick="view_transaction()">View Transaction</button>
+<br><br>
+<p id="view_payer_id"></p>
+<br><br>
+<p id="view_payee_id"></p>
+<br><br>
+<p id="view_amount_id"></p>
+
+<script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+<script>
+    const contract_address = "0x6e349f0a989afa6abf1b941ebe3eb8a4f5ce4d9e";
+    const contract_abi = [
+        {
+            "inputs": [],
+            "stateMutability": "nonpayable",
+            "type": "constructor"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "amount_to_pay",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "address",
+                    "name": "payer_add",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "payee_add",
+                    "type": "address"
+                }
+            ],
+            "name": "weixin",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "check_transaction",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        }
+    ];
+
+    const web3 = new Web3(Web3.givenProvider);
+    const contract = new web3.eth.Contract(contract_abi, contract_address);
+
+    async function transfer() {
+        const accounts = await web3.eth.requestAccounts();
+        console.log("accounts[0] " + accounts[0]);
+        const payer = document.getElementById('payer_id').value;
+        const payee = document.getElementById('payee_id').value;
+        const amount = document.getElementById('num_id').value;
+        console.log("pay info:" + payer, payee, amount);
+        await contract.methods.weixin(amount, payer, payee).send({ from: accounts[0] });
+    }
+
+    async function view_transaction() {
+        const result = await contract.methods.check_transaction().call();
+        const payee = result[0];
+        const payer = result[1];
+        const amount = result[2];
+        console.log("stored value ", payee, payer, amount);
+        document.getElementById('view_payer_id').innerText = "Payer: " + payer;
+        document.getElementById('view_payee_id').innerText = "Payee: " + payee;
+        document.getElementById('view_amount_id').innerText = "Amount: " + amount;
+    }
+</script>
