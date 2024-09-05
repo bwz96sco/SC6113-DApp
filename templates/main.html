@@ -10,13 +10,19 @@
 
 <body>
     <div class="container">
-        <h2>Welcome to DAPP - Store and Transfer Money</h2>
-        <br>
-        <form action="main" method="post">
-            <input type="text" name="q" value="q">
-            <input type="submit" value="Enter">
-        </form>
+        <h2>Hi {{ r }}, How can I help you?</h2>
 
+        <br>
+        <form action="/store_money" method="post">
+            <input type="submit" value="Store Money">
+        </form>
+        </br>
+
+        <br>
+        <form action="/transfer_money" method="post">
+            <input type="submit" value="Transfer money">
+        </form>
+        </br>
     </div>
 </body>
 
